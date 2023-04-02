@@ -7,6 +7,7 @@ interface PostRepository {
     fun save(post: Post, callback: Callback<Post>)
     fun removeById(id: Long, callback: Callback<Unit>)
     fun likeById(id: Long, callback: Callback<Post>)
+    fun dislikeById(id: Long, callback: Callback<Post>)
 
     interface Callback<T> {
         fun onSuccess(posts: T) {}

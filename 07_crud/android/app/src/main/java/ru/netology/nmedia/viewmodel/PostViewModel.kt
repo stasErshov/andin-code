@@ -51,7 +51,15 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     fun save() {
         edited.value?.let {
             repository.save(it, object : PostRepository.Callback<Post> {
-               // TODO:
+                override fun onSuccess(post: Post) {
+                    _postCreated.postValue(Unit)
+                    edited.postValue(empty)
+                    val posts = _data.value?.posts.orEmpty()
+                    _data.postValue(FeedModel(posts = posts, empty = posts.isEmpty()))
+                }
+                override fun onError(e: Exception) {
+                    _data.postValue(FeedModel(error = true))
+                }
             })
             _postCreated.value = Unit
         }
@@ -71,14 +79,50 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun likeById(id: Long) {
-        repository.likeById(id, object : PostRepository.Callback<Post> {
-            // TODO:
-        })
+        val posts = _data.value?.posts.orEmpty()
+        _data.value = FeedModel(posts = posts, loading = true)
+        val oldPost =
+            _data.value?.posts?.find { it.id == id } ?: error("Post not found")
+        var newPosts: List<Post>
+        if (!oldPost.likedByMe) {
+            repository.likeById(id, object : PostRepository.Callback<Post> {
+                override fun onSuccess(post: Post) {
+                    newPosts = _data.value?.posts.orEmpty()
+                        .map { if (it.id == id) post else it }
+                    _data.postValue(FeedModel(posts = newPosts))
+                }
+                override fun onError(e: Exception) {
+                    _data.postValue(FeedModel(error = true))
+                }
+            })
+        } else {
+            repository.dislikeById(id, object : PostRepository.Callback<Post> {
+                override fun onSuccess(post: Post) {
+                    newPosts = _data.value?.posts.orEmpty()
+                        .map { if (it.id == id) post else it }
+                    _data.postValue(FeedModel(posts = newPosts))
+                }
+                override fun onError(e: Exception) {
+                    _data.postValue(FeedModel(error = true))
+                }
+            })
+        }
+        loadPosts()
+        _data.value = FeedModel(loading = false)
     }
 
     fun removeById(id: Long) {
-        repository.removeById(id, object : PostRepository.Callback<Unit> {
-            // TODO
+        val oldPosts = _data.value?.posts.orEmpty()
+        repository.removeById(id, object : PostRepository.Callback<Unit>{
+            override fun onSuccess(post: Unit) {
+                val posts = oldPosts.filter { it.id != id }
+                _data.value = FeedModel(posts = posts, empty = posts.isEmpty())
+            }
+
+            override fun onError(e: Exception) {
+                _data.postValue(_data.value?.copy(posts = oldPosts))
+                _data.postValue(FeedModel(error = true))
+            }
         })
     }
 }
