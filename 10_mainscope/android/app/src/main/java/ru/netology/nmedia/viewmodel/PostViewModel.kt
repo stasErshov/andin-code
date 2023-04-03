@@ -88,10 +88,35 @@ class PostViewModel(application: Application) : AndroidViewModel(application) {
     }
 
     fun likeById(id: Long) {
-        TODO()
+        if (data.value?.posts.orEmpty().filter { it.id == id }.none { it.likedByMe }) {
+            viewModelScope.launch {
+                try {
+                    repository.likeById(id)
+                } catch (e: Exception) {
+                    _dataState.value = FeedModelState(error = true)
+                }
+            }
+        } else {
+            viewModelScope.launch {
+                try {
+                    repository.dislikeById(id)
+                } catch (e: Exception) {
+                    _dataState.value = FeedModelState(error = true)
+                }
+            }
+        }
     }
 
     fun removeById(id: Long) {
-        TODO()
+        val posts = data.value?.posts.orEmpty()
+            .filter { it.id != id }
+        data.value?.copy(posts = posts, empty = posts.isEmpty())
+        viewModelScope.launch {
+            try {
+                repository.removeById(id)
+            } catch (e: Exception) {
+                _dataState.value = FeedModelState(error = true)
+            }
+        }
     }
 }
