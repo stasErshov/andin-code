@@ -77,6 +77,20 @@ class FeedFragment : Fragment() {
             findNavController().navigate(R.id.action_feedFragment_to_newPostFragment)
         }
 
+        viewModel.newerCount.observe(viewLifecycleOwner){
+            println("Newer count: \$it")
+            if (it == 0)
+                binding.elevatedButton.visibility = View.GONE
+            else
+                binding.elevatedButton.visibility = View.VISIBLE
+
+        }
+        binding.elevatedButton.setOnClickListener {
+            viewModel.loadPosts()
+            binding.elevatedButton.visibility = View.GONE
+        }
+
+
         return binding.root
     }
 }

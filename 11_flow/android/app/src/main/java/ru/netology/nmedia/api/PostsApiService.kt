@@ -29,6 +29,8 @@ private val retrofit = Retrofit.Builder()
 
 interface PostsApiService {
     @GET("posts")
+    suspend fun getPosts(): Response<List<Post>>
+    @GET("posts")
     suspend fun getAll(): Response<List<Post>>
 
     @GET("posts/{id}/newer")

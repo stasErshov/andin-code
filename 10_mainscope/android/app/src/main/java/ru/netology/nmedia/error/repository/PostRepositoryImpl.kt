@@ -1,4 +1,4 @@
-package ru.netology.nmedia.repository
+package ru.netology.nmedia.error.repository
 
 import androidx.lifecycle.*
 import okio.IOException

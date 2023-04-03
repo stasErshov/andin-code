@@ -47,6 +47,21 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <Button
+        android:id="@+id/elevatedButton"
+        style="@style/Widget.Material3.Button.Icon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/common_spacing"
+        android:backgroundTint="@color/teal_200"
+        android:text="@string/new_posts"
+        android:textColor="@color/black"
+        app:icon="@drawable/ic_arrow_upward_24"
+        app:iconTint="@color/black"
+        android:layout_gravity="center_horizontal"
+        android:visibility="gone"
+        />
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"
         android:layout_width="wrap_content"

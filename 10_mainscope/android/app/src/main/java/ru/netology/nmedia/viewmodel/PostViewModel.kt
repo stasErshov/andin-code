@@ -7,8 +7,8 @@ import ru.netology.nmedia.db.AppDb
 import ru.netology.nmedia.dto.Post
 import ru.netology.nmedia.model.FeedModel
 import ru.netology.nmedia.model.FeedModelState
-import ru.netology.nmedia.repository.PostRepository
-import ru.netology.nmedia.repository.PostRepositoryImpl
+import ru.netology.nmedia.error.repository.PostRepository
+import ru.netology.nmedia.error.repository.PostRepositoryImpl
 import ru.netology.nmedia.util.SingleLiveEvent
 
 private val empty = Post(

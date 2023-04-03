@@ -53,6 +53,16 @@ class PostRepositoryImpl(private val dao: PostDao) : PostRepository {
         .catch { e -> throw AppError.from(e) }
         .flowOn(Dispatchers.Default)
 
+    override suspend fun getNewerPosts(): List<Post> {
+        val response  = PostsApi.service.getPosts()
+        if (!response.isSuccessful) {
+            throw RuntimeException("Response code: ${response.code()}")
+        }
+        return response.body()?.also {
+            dao.getNewerPost()
+        } ?: throw RuntimeException("Response code: ${response.code()}")
+    }
+
     override suspend fun save(post: Post) {
         try {
             val response = PostsApi.service.save(post)

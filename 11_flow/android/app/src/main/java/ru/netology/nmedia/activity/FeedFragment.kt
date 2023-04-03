@@ -67,9 +67,19 @@ class FeedFragment : Fragment() {
             adapter.submitList(state.posts)
             binding.emptyText.isVisible = state.empty
         }
-        viewModel.newerCount.observe(viewLifecycleOwner) { state ->
-            // TODO: just log it, interaction must be in homework
-            println(state)
+
+        viewModel.newerCount.observe(viewLifecycleOwner){
+            println("Newer count: $it")
+            if (it == 0)
+                binding.elevatedButton.visibility = View.GONE
+            else
+                binding.elevatedButton.visibility = View.VISIBLE
+
+        }
+
+        binding.elevatedButton.setOnClickListener {
+            viewModel.loadNewerPost()
+            binding.elevatedButton.visibility = View.GONE
         }
 
         binding.swiperefresh.setOnRefreshListener {
